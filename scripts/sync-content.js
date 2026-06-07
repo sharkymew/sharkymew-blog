@@ -14,7 +14,11 @@ console.log("已加载 .env 配置文件\n");
 // 从环境变量读取配置
 const ENABLE_CONTENT_SYNC = process.env.ENABLE_CONTENT_SYNC !== "false"; // 默认启用
 const CONTENT_REPO_URL = process.env.CONTENT_REPO_URL || "";
-const CONTENT_DIR = process.env.CONTENT_DIR || path.join(rootDir, "content");
+const CONTENT_DIR = path.resolve(
+	rootDir,
+	process.env.CONTENT_DIR || "posts/content",
+);
+const UPDATE_CONTENT = process.env.UPDATE_CONTENT === "true";
 
 console.log("开始同步内容...\n");
 
@@ -31,7 +35,8 @@ if (!ENABLE_CONTENT_SYNC) {
 // 检查内容目录是否存在
 if (!fs.existsSync(CONTENT_DIR)) {
 	console.log(`内容目录不存在：${CONTENT_DIR}`);
-	console.log("将使用独立仓库模式");
+	console.log("请先初始化内容 submodule：");
+	console.log("git submodule update --init --recursive posts/content\n");
 
 	if (!CONTENT_REPO_URL) {
 		console.warn("警告：未设置 CONTENT_REPO_URL，将使用本地内容");
@@ -55,7 +60,7 @@ if (!fs.existsSync(CONTENT_DIR)) {
 } else {
 	console.log(`内容目录已存在：${CONTENT_DIR}`);
 
-	if (fs.existsSync(path.join(CONTENT_DIR, ".git"))) {
+	if (UPDATE_CONTENT && fs.existsSync(path.join(CONTENT_DIR, ".git"))) {
 		try {
 			console.log("正在同步远程内容（强制模式）...");
 
@@ -87,6 +92,8 @@ if (!fs.existsSync(CONTENT_DIR)) {
 		} catch (error) {
 			console.warn("内容更新失败：", error.message);
 		}
+	} else {
+		console.log("跳过远程内容更新，仅使用当前 submodule checkout");
 	}
 }
 
@@ -138,33 +145,6 @@ for (const mapping of contentMappings) {
 }
 
 console.log("\n内容同步完成\n");
-try {
-	// 1. 获取 content 分支名
-	const branch = execSync("git rev-parse --abbrev-ref HEAD", {
-		cwd: CONTENT_DIR,
-	})
-		.toString()
-		.trim();
-
-	// 2. 获取 content commit hash（短）
-	const hash = execSync("git rev-parse --short HEAD", {
-		cwd: CONTENT_DIR,
-	})
-		.toString()
-		.trim();
-
-	// 3. 提交主仓库
-	execSync("git add .", { cwd: rootDir });
-
-	execSync(
-		`git commit -m "chore(content): sync ${branch}@${hash}"`,
-		{ cwd: rootDir },
-	);
-
-	console.log(`已提交内容更新（${branch}@${hash}）`);
-} catch {
-	console.log("没有变化，跳过提交");
-}
 
 // 递归复制函数
 function copyRecursive(src, dest) {

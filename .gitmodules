@@ -1,0 +1,3 @@
+[submodule "posts/content"]
+	path = posts/content
+	url = https://github.com/matsuzaka-yuki/Mizuki-Content.git
