@@ -33,11 +33,11 @@ export const siteConfig: SiteConfig = {
 		// 显示模式："text-icon" 显示图标+文本，"logo" 仅显示Logo
 		mode: "text-icon",
 		// 顶栏标题文本
-		text: "MizukiUI",
+		text: "SharkyMew Blog",
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.webp
-		icon: "assets/home/home.webp",
+		icon: "assets/home/home.png",
 		// 网站Logo图片路径
-		logo: "assets/home/default-logo.webp",
+		logo: "assets/home/home.png",
 	},
 
 	// 页面自动缩放配置
@@ -47,13 +47,13 @@ export const siteConfig: SiteConfig = {
 	},
 
 	bangumi: {
-		userId: "your-bangumi-id", // 在此处设置你的Bangumi用户ID，可以设置为 "sai" 测试
+		userId: "test", // 在此处设置你的Bangumi用户ID，可以设置为 "sai" 测试
 		fetchOnDev: false, // 是否在开发环境下获取 Bangumi 数据（默认 false），获取前先执行 pnpm build 构建 json 文件
 	},
 
 	bilibili: {
-		vmid: "your-bilibili-vmid", // 在此处设置你的Bilibili用户ID (uid)，例如 "1129280784"
-		fetchOnDev: false, // 是否在开发环境下获取 Bilibili 数据（默认 false）
+		vmid: "547949139", // 在此处设置你的Bilibili用户ID (uid)，例如 "1129280784"
+		fetchOnDev: true, // 是否在开发环境下获取 Bilibili 数据（默认 false）
 		coverMirror: "", // 封面图片镜像源（可选，如果需要使用镜像源，例如 "https://images.weserv.nl/?url="）
 		useWebp: true, // 是否使用WebP格式（默认 true）
 
@@ -79,7 +79,7 @@ export const siteConfig: SiteConfig = {
 		// 是否启用布局切换功能
 		enable: true,
 		// 是否允许用户切换布局
-		allowSwitch: true,
+		allowSwitch: false,
 		// 文章列表页分类导航条配置
 		categoryBar: {
 			enable: true, // 是否在文章列表页显示分类导航条
@@ -89,19 +89,19 @@ export const siteConfig: SiteConfig = {
 	// 标签样式配置
 	tagStyle: {
 		// 是否使用新样式（悬停高亮样式）还是旧样式（外框常亮样式）
-		useNewStyle: false,
+		useNewStyle: true,
 	},
 
 	// 壁纸模式配置
 	wallpaperMode: {
 		// 默认壁纸模式：banner=顶部横幅，fullscreen=全屏壁纸，none=无壁纸
-		defaultMode: "banner",
+		defaultMode: "none",
 		// 整体布局方案切换按钮显示设置（默认："desktop"）
 		// "off" = 不显示
 		// "mobile" = 仅在移动端显示
 		// "desktop" = 仅在桌面端显示
 		// "both" = 在所有设备上显示
-		showModeSwitchOnMobile: "both",
+		showModeSwitchOnMobile: "off",
 	},
 
 	banner: {
@@ -147,15 +147,15 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true,
-			title: "わたしの部屋",
+			title: "SharkyMew Blog",
 			switchable: true,
 
 			subtitle: [
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"The best way out is always through.",
+				"Even when the world seems dark, you are my light.",
+				"You've become a part of my daily life without me realizing it.",
+				"Talking with you makes every day a little more enjoyable.",
+				"Today is just an ordinary day. But it's a good day, just a little bit.",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -183,7 +183,7 @@ export const siteConfig: SiteConfig = {
 		desktopSidebar: true, // 电脑端右侧边栏 TOC
 		floating: true, // 悬浮 TOC 按钮
 		depth: 2, // 目录深度，1-6，1 表示只显示 h1 标题，2 表示显示 h1 和 h2 标题，依此类推
-		useJapaneseBadge: true, // 使用日语假名标记（あいうえお...）代替数字，开启后会将 1、2、3... 改为 あ、い、う...
+		useJapaneseBadge: false, // 使用日语假名标记（あいうえお...）代替数字，开启后会将 1、2、3... 改为 あ、い、う...
 	},
 	showCoverInContent: true, // 在文章内容页显示文章封面
 	generateOgImages: false, // 启用生成OpenGraph图片功能,注意开启后要渲染很长时间，不建议本地调试的时候开启
