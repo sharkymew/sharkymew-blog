@@ -354,6 +354,29 @@ html[data-banner-title-enabled="false"] .banner-text-overlay {
 	display: none !important;
 }
 
+html[data-wallpaper-mode="none"] #banner-wrapper,
+html[data-wallpaper-mode="overlay"] #banner-wrapper {
+	display: none !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+html[data-wallpaper-mode="none"] body.enable-banner .absolute.w-full.z-30,
+html[data-wallpaper-mode="overlay"] body.enable-banner .absolute.w-full.z-30 {
+	top: 5.5rem !important;
+	min-height: calc(100vh - 5.5rem) !important;
+}
+
+html[data-wallpaper-mode="none"] body.enable-banner #main-grid,
+html[data-wallpaper-mode="overlay"] body.enable-banner #main-grid {
+	transform: none !important;
+}
+
+html[data-wallpaper-mode="none"] body.enable-banner #top-row,
+html[data-wallpaper-mode="overlay"] body.enable-banner #top-row {
+	height: auto !important;
+}
+
 /* ==========================================================================
    全屏 Banner 模式 - 复用 Banner 设计，仅改变高度
    ========================================================================== */

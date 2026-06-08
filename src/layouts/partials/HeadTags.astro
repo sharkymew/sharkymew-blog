@@ -6,7 +6,7 @@
  * 提取自 Layout.astro 以实现更好的代码组织
  */
 
-import { profileConfig, siteConfig } from "@/config";
+import { fullscreenWallpaperConfig, profileConfig, siteConfig } from "@/config";
 
 import {
 	DARK_MODE,
@@ -111,8 +111,22 @@ const favicons: Favicon[] =
 		configHue,
 		themeColorFixed: siteConfig.themeColor.fixed ?? false,
 		pageScaling: siteConfig.pageScaling,
+		defaultWallpaperMode: siteConfig.wallpaperMode.defaultMode,
+		wallpaperEnabled: fullscreenWallpaperConfig.enable ?? true,
 	}}
 >
+	const validWallpaperModes = ["banner", "fullscreen", "overlay", "none"];
+	const storedWallpaperMode = wallpaperEnabled
+		? localStorage.getItem("wallpaperMode")
+		: null;
+	const initialWallpaperMode = validWallpaperModes.includes(storedWallpaperMode)
+		? storedWallpaperMode
+		: defaultWallpaperMode;
+	document.documentElement.setAttribute(
+		"data-wallpaper-mode",
+		initialWallpaperMode,
+	);
+
 	// Load the theme from local storage
 	const theme = localStorage.getItem("theme") || DEFAULT_THEME;
 	let isDark = false;
