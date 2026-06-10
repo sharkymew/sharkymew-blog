@@ -1,4 +1,6 @@
 ---
+import { safeJsonScriptContent } from "@utils/security";
+
 export interface Props {
 	data: Record<string, unknown>;
 }
@@ -10,5 +12,5 @@ const { data } = Astro.props;
 	is:inline
 	slot="head"
 	type="application/ld+json"
-	set:html={JSON.stringify(data)}
+	set:html={safeJsonScriptContent(data)}
 />

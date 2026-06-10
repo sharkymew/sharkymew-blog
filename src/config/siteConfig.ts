@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
 	},
 
 	bilibili: {
-		vmid: "547949139", // 在此处设置你的Bilibili用户ID (uid)，例如 "1129280784"
+		vmid: "547949139", // 在此处设置你的Bilibili用户ID (uid)
 		fetchOnDev: true, // 是否在开发环境下获取 Bilibili 数据（默认 false）
 		coverMirror: "", // 封面图片镜像源（可选，如果需要使用镜像源，例如 "https://images.weserv.nl/?url="）
 		useWebp: true, // 是否使用WebP格式（默认 true）
@@ -211,7 +211,8 @@ export const siteConfig: SiteConfig = {
 	},
 
 	thirdPartyAnalytics: {
-		enable: false, // 是否启用第三方统计（Microsoft Clarity），默认关闭，启用可能影响 Lighthouse 评分
+		enable: false, // 是否启用第三方统计，默认关闭，启用可能影响 Lighthouse 评分
+		gtmId: "", // Google Tag Manager 容器 ID，留空则不加载 GTM
 		clarityId: "", // Clarity 项目 ID
 	},
 	// 卡片样式配置

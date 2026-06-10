@@ -7,6 +7,7 @@
 import { JAPANESE_KATAKANA } from "../components/features/toc/utils/japanese-katakana";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import { escapeHtml } from "./security";
 
 export interface TOCConfig {
 	contentId?: string;
@@ -103,15 +104,6 @@ export class TOCManager {
 		return clone.textContent || "";
 	}
 
-	private escapeHtmlAttr(value: string): string {
-		return value
-			.replace(/&/g, "&amp;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#39;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;");
-	}
-
 	private generateBadgeContent(depth: number, heading1Count: number): string {
 		if (depth === this.minDepth) {
 			if (
@@ -186,20 +178,21 @@ export class TOCManager {
 						: heading.id || "Heading";
 			}
 
-			const escapedHeadingText = this.escapeHtmlAttr(headingText);
+			const escapedHeadingText = escapeHtml(headingText);
+			const escapedHeadingId = escapeHtml(heading.id);
 
 			tocHTML += `
         <a 
-          href="#${heading.id}" 
+          href="#${escapedHeadingId}"
 			  class="toc-item toc-level-${depthLevel}"
-          data-heading-id="${heading.id}"
+          data-heading-id="${escapedHeadingId}"
 		  aria-label="${escapedHeadingText}"
 		  title="${escapedHeadingText}"
         >
 			  <div class="toc-badge ${depth === this.minDepth ? "toc-badge-index" : ""}">
             ${badgeContent}
           </div>
-			  <div class="toc-label ${depth <= this.minDepth + 1 ? "toc-label-primary" : "toc-label-secondary"}">${headingText}</div>
+			  <div class="toc-label ${depth <= this.minDepth + 1 ? "toc-label-primary" : "toc-label-secondary"}">${escapedHeadingText}</div>
         </a>
       `;
 		});

@@ -28,6 +28,7 @@ import {
 	initPostIdMap,
 } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
+import { safeJsonScriptContent } from "@utils/security";
 import { getFileDirFromPath } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
@@ -119,7 +120,7 @@ const jsonLd = {
 		is:inline
 		slot="head"
 		type="application/ld+json"
-		set:html={JSON.stringify(jsonLd)}
+		set:html={safeJsonScriptContent(jsonLd)}
 	/>
 	<script>
 		import("../scripts/right-sidebar-layout.js");

@@ -110,13 +110,14 @@ export default defineConfig({
 - name: Build site
   run: pnpm run build
   env:
-    ENABLE_CONTENT_SYNC: true
-    CONTENT_REPO_URL: https://${{ secrets.PAT_TOKEN }}@github.com/other-user/repo.git
+    ENABLE_CONTENT_SYNC: false
     USE_SUBMODULE: true
 ```
 
 在 Secrets 中添加:
 - `PAT_TOKEN`: GitHub Personal Access Token (需要 `repo` 权限)
+
+不要把 PAT 拼进 `CONTENT_REPO_URL`。让 `actions/checkout` 负责鉴权，或改用只读 deploy key / SSH URL。
 
 ### 工作流说明
 
@@ -170,15 +171,16 @@ export default defineConfig({
 **方式 A: 授权 Vercel 访问**
 - 在连接 GitHub 仓库时，确保授权包括内容仓库的访问权限
 
-**方式 B: 使用 Token**
+**方式 B: 使用 SSH / Deploy Key**
 
 添加环境变量:
 ```
 ENABLE_CONTENT_SYNC=true
-GITHUB_TOKEN=ghp_your_personal_access_token
-CONTENT_REPO_URL=https://${GITHUB_TOKEN}@github.com/your-username/Mizuki-Content-Private.git
+CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 USE_SUBMODULE=true
 ```
+
+将只读 deploy key 或 SSH 私钥配置到部署平台的安全变量中，不要把 PAT 拼进仓库 URL。
 
 ### 配置文件
 
@@ -310,11 +312,11 @@ USE_SUBMODULE=false  # ⚠️ Cloudflare Pages 默认不支持 submodule
 
 **GitHub Actions**:
 - **同账号**: 确保使用 `${{ secrets.GITHUB_TOKEN }}`
-- **跨账号**: 配置 SSH 密钥或 PAT Token
+- **跨账号**: 配置 SSH 密钥、只读 deploy key 或 CI checkout token
 
 **Vercel/Netlify**:
 - 确保授权了私有仓库访问
-- 或使用 Token 方式: `https://TOKEN@github.com/user/repo.git`
+- 或使用 SSH / deploy key: `git@github.com:user/repo.git`
 
 ### 问题 3: Submodule 与 .gitignore 冲突
 
@@ -387,7 +389,7 @@ fatal: could not read Username for 'https://github.com'
 
 **解决**:
 1. 在 Vercel 项目设置中添加 GitHub 集成权限
-2. 或使用 Token: `https://${GITHUB_TOKEN}@github.com/user/repo.git`
+2. 或配置 SSH / deploy key: `git@github.com:user/repo.git`
 3. 或切换到独立仓库模式: `USE_SUBMODULE=false`
 
 **检查**:

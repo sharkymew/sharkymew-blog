@@ -19,6 +19,7 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
+import { safeJsonScriptContent } from "@utils/security";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import {
 	licenseConfig,
@@ -103,6 +104,22 @@ const relatedPosts = relatedPostsConfig.enable
 	? await getRelatedPosts(entry, relatedPostsConfig.maxCount)
 	: [];
 
+function isBlockedRemoteImageHost(hostname: string): boolean {
+	const host = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+	return (
+		host === "localhost" ||
+		host === "127.0.0.1" ||
+		host === "0.0.0.0" ||
+		host === "::1" ||
+		host.startsWith("10.") ||
+		host.startsWith("192.168.") ||
+		/^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+		host.startsWith("169.254.") ||
+		host.startsWith("fc") ||
+		host.startsWith("fd")
+	);
+}
+
 // Process cover image, for both OG and SharePoster
 let ogCoverUrl: string | undefined;
 let posterCoverUrl = entry.data.image;
@@ -142,11 +159,37 @@ if (entry.data.image) {
 
 		// Convert to base64 only for poster
 		try {
-			const response = await fetch(entry.data.image);
-			const arrayBuffer = await response.arrayBuffer();
-			const base64 = Buffer.from(arrayBuffer).toString("base64");
-			const contentType = response.headers.get("content-type") || "image/jpeg";
-			posterCoverUrl = `data:${contentType};base64,${base64}`;
+			const imageUrl = new URL(entry.data.image);
+			if (!["http:", "https:"].includes(imageUrl.protocol)) {
+				throw new Error("Unsupported remote image protocol");
+			}
+			if (isBlockedRemoteImageHost(imageUrl.hostname)) {
+				throw new Error("Blocked private remote image URL");
+			}
+			const controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), 5000);
+			try {
+				const response = await fetch(imageUrl, { signal: controller.signal });
+				const contentLength = Number(
+					response.headers.get("content-length") || "0",
+				);
+				if (contentLength > 2 * 1024 * 1024) {
+					throw new Error("Remote image too large");
+				}
+				const contentType =
+					response.headers.get("content-type") || "image/jpeg";
+				if (!contentType.startsWith("image/")) {
+					throw new Error("Remote URL did not return an image");
+				}
+				const arrayBuffer = await response.arrayBuffer();
+				if (arrayBuffer.byteLength > 2 * 1024 * 1024) {
+					throw new Error("Remote image too large");
+				}
+				const base64 = Buffer.from(arrayBuffer).toString("base64");
+				posterCoverUrl = `data:${contentType};base64,${base64}`;
+			} finally {
+				clearTimeout(timeout);
+			}
 		} catch {
 			posterCoverUrl = entry.data.image;
 		}
@@ -222,7 +265,7 @@ const jsonLd = {
 		is:inline
 		slot="head"
 		type="application/ld+json"
-		set:html={JSON.stringify(jsonLd)}
+		set:html={safeJsonScriptContent(jsonLd)}
 	/>
 	<!-- 引入右侧边栏布局管理器 -->
 	<script>

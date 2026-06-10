@@ -18,6 +18,7 @@ const { class: className } = Astro.props;
 </table-of-contents>
 
 <script>
+	import { escapeHtml } from "../../../utils/security";
 	import { JAPANESE_KATAKANA } from "./utils/japanese-katakana";
 	import {
 		extractHeadings,
@@ -290,6 +291,7 @@ const { class: className } = Astro.props;
 			let h1Count = 1;
 			const tocHTML = tocItems
 				.map((item) => {
+					const itemId = escapeHtml(item.id);
 					const depthClass =
 						item.depth === 0
 							? ""
@@ -313,7 +315,7 @@ const { class: className } = Astro.props;
 							'<div class="transition w-1.5 h-1.5 rounded-sm bg-black/5 dark:bg-white/10"></div>';
 					}
 
-					return `<a href="#${item.id}" class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-2">
+					return `<a href="#${itemId}" class="px-2 flex gap-2 relative transition w-full min-h-9 rounded-xl hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] py-2">
 					<div class="transition w-5 h-5 shrink-0 rounded-lg text-xs flex items-center justify-center font-bold ${depthClass} ${item.depth === 0 ? "bg-[var(--toc-badge-bg)] text-[var(--btn-content)]" : ""}">
 						${badgeContent}
 					</div>

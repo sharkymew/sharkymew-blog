@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -19,6 +19,39 @@ const CONTENT_DIR = path.resolve(
 	process.env.CONTENT_DIR || "posts/content",
 );
 const UPDATE_CONTENT = process.env.UPDATE_CONTENT === "true";
+
+function isPathInsideRoot(targetPath) {
+	const relativePath = path.relative(rootDir, targetPath);
+	return (
+		relativePath === "" ||
+		(!relativePath.startsWith("..") && !path.isAbsolute(relativePath))
+	);
+}
+
+function redactRepositoryUrl(repoUrl) {
+	try {
+		const url = new URL(repoUrl);
+		if (url.username || url.password) {
+			url.username = "redacted";
+			url.password = url.password ? "redacted" : "";
+		}
+		return url.toString();
+	} catch {
+		return repoUrl.replace(/\/\/[^/@\s]+@/g, "//redacted@");
+	}
+}
+
+function runGit(args, options = {}) {
+	return execFileSync("git", args, {
+		stdio: "inherit",
+		...options,
+	});
+}
+
+if (!isPathInsideRoot(CONTENT_DIR)) {
+	console.error(`错误：CONTENT_DIR 必须位于项目目录内：${CONTENT_DIR}`);
+	process.exit(1);
+}
 
 console.log("开始同步内容...\n");
 
@@ -47,9 +80,8 @@ if (!fs.existsSync(CONTENT_DIR)) {
 	}
 
 	try {
-		console.log(`正在克隆内容仓库：${CONTENT_REPO_URL}`);
-		execSync(`git clone --depth 1 ${CONTENT_REPO_URL} ${CONTENT_DIR}`, {
-			stdio: "inherit",
+		console.log(`正在克隆内容仓库：${redactRepositoryUrl(CONTENT_REPO_URL)}`);
+		runGit(["clone", "--depth", "1", CONTENT_REPO_URL, CONTENT_DIR], {
 			cwd: rootDir,
 		});
 		console.log("内容仓库克隆成功");
@@ -65,30 +97,30 @@ if (!fs.existsSync(CONTENT_DIR)) {
 			console.log("正在同步远程内容（强制模式）...");
 
 			// 1. 防止本地修改丢失
-			execSync("git stash push --include-untracked -m 'auto-sync'", {
-				stdio: "inherit",
+			runGit(["stash", "push", "--include-untracked", "-m", "auto-sync"], {
 				cwd: CONTENT_DIR,
 			});
 
 			// 2. 更新远程引用
-			execSync("git fetch --all --prune", {
-				stdio: "inherit",
+			runGit(["fetch", "--all", "--prune"], {
 				cwd: CONTENT_DIR,
 			});
 
 			// 3. 判断分支
 			let branch = "main";
 			try {
-				execSync("git rev-parse --verify origin/main", { cwd: CONTENT_DIR });
+				execFileSync("git", ["rev-parse", "--verify", "origin/main"], {
+					cwd: CONTENT_DIR,
+				});
 			} catch {
 				branch = "master";
 			}
 
 			// 4. 强制同步
-		execSync(`git checkout ${branch}`, { cwd: CONTENT_DIR });
-		execSync(`git reset --hard origin/${branch}`, { cwd: CONTENT_DIR });
+			runGit(["checkout", branch], { cwd: CONTENT_DIR });
+			runGit(["reset", "--hard", `origin/${branch}`], { cwd: CONTENT_DIR });
 
-		console.log(`内容同步成功（分支：${branch}）`);
+			console.log(`内容同步成功（分支：${branch}）`);
 		} catch (error) {
 			console.warn("内容更新失败：", error.message);
 		}

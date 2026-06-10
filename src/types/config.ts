@@ -570,6 +570,7 @@ export interface PageProgressBarConfig {
  * 第三方统计配置（可能影响 Lighthouse 评分）
  */
 export interface ThirdPartyAnalyticsConfig {
-	enable: boolean; // 是否启用第三方统计（Microsoft Clarity），默认关闭
+	enable: boolean; // 是否启用第三方统计，默认关闭
+	gtmId?: string; // Google Tag Manager 容器 ID，留空则不加载 GTM
 	clarityId?: string; // Clarity 项目 ID
 }

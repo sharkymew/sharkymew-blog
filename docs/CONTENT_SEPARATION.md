@@ -178,7 +178,7 @@ ENABLE_CONTENT_SYNC=false
 # 支持 HTTPS 和 SSH 方式
 # 公开仓库: https://github.com/username/repo.git
 # 私有仓库 (SSH): git@github.com:username/repo.git
-# 私有仓库 (Token): https://TOKEN@github.com/username/repo.git
+# 私有仓库建议使用只读 deploy key 或 CI 平台托管凭据
 CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
 
 # 内容目录路径 (默认 ./content 一般无需改动)
@@ -291,32 +291,32 @@ ssh -T git@gitlab.com
 pnpm run sync-content
 ```
 
-### 方案 B: HTTPS + Personal Access Token
+### 方案 B: CI / 平台托管凭据
 
-#### 1. 生成 Token
+#### 1. 配置只读访问凭据
 
 **GitHub**:
-- Settings → Developer settings → Personal access tokens → Generate new token
-- 权限: 勾选 `repo` (完整访问)
+- Settings → Deploy keys → Add deploy key
+- 权限：只读即可，除非部署流程需要写入内容仓库
 
 **GitLab**:
-- Preferences → Access Tokens
-- Scopes: `read_repository`
+- Repository → Settings → Deploy keys
+- 权限：只读即可
 
 **Gitee**:
-- 设置 → 私人令牌 → 生成新令牌
-- 权限: `projects` (读取)
+- 仓库设置 → 部署公钥
+- 权限：只读即可
 
 #### 2. 配置 .env
 
 ```bash
 ENABLE_CONTENT_SYNC=true
-CONTENT_REPO_URL=https://YOUR_TOKEN@github.com/your-username/Mizuki-Content-Private.git
+CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 ```
 
 ⚠️ **安全提示**:
 - **不要将 `.env` 提交到 Git!** (已在 `.gitignore` 中)
-- Token 具有完整权限,请妥善保管
+- 不要把 PAT 写进 `CONTENT_REPO_URL`。如需访问私有仓库，请优先使用只读 deploy key、SSH agent 或 CI 平台自带 checkout token。
 
 ---
 
@@ -422,10 +422,10 @@ ssh -T git@github.com
 - 公钥是否添加到 GitHub
 - SSH agent 是否运行: `ssh-add -l`
 
-**HTTPS + Token 方式**:
-- 检查 Token 是否有效
-- 检查 Token 权限是否正确 (`repo` 权限)
-- 确认 URL 格式: `https://TOKEN@github.com/user/repo.git`
+**SSH / Deploy Key 方式**:
+- 检查 deploy key 是否已添加到内容仓库
+- 检查 SSH 私钥是否已加载到本机或 CI 环境
+- 确认 URL 格式: `git@github.com:user/repo.git`
 
 ### 问题 4: .env 文件不生效
 

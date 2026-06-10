@@ -2,6 +2,7 @@
  * TOC 组件共享工具函数
  */
 
+import { escapeHtml } from "../../../../utils/security";
 import type { HeadingData, TOCConfig, TOCItem } from "../types/toc";
 import { getKatakanaBadge } from "./japanese-katakana";
 
@@ -72,10 +73,10 @@ export function generateTOCItems(
 
 			return {
 				id: h.id,
-				text: h.text,
+				text: escapeHtml(h.text),
 				level: h.level,
 				depth,
-				badge,
+				badge: badge ? escapeHtml(badge) : undefined,
 			};
 		});
 }

@@ -1,4 +1,4 @@
-import { createCipheriv, createHmac, pbkdf2Sync } from "node:crypto";
+import { createCipheriv, pbkdf2Sync, randomBytes } from "node:crypto";
 
 // 共享加密常量 — 客户端 PasswordProtection.astro 中的内联脚本必须保持同步
 export const CRYPTO_CONSTANTS = {
@@ -9,13 +9,6 @@ export const CRYPTO_CONSTANTS = {
 	KEY_LENGTH: 32,
 	VERIFY_PREFIX: "MIZUKI-VERIFY:", // 验证前缀：正确解密后内容以此开头
 } as const;
-
-/**
- * 使用 HMAC-SHA256 派生确定性字节
- */
-function deriveBytes(key: string, context: string, length: number): Buffer {
-	return createHmac("sha256", key).update(context).digest().subarray(0, length);
-}
 
 /**
  * 加密 HTML 内容
@@ -29,7 +22,7 @@ function deriveBytes(key: string, context: string, length: number): Buffer {
 export function encryptContent(
 	html: string,
 	password: string,
-	slug: string,
+	_slug: string,
 ): string {
 	const {
 		PBKDF2_ITERATIONS,
@@ -41,8 +34,8 @@ export function encryptContent(
 
 	const plaintext = VERIFY_PREFIX + html;
 
-	const salt = deriveBytes(password, `salt:${slug}`, SALT_LENGTH);
-	const iv = deriveBytes(password, `iv:${slug}`, IV_LENGTH);
+	const salt = randomBytes(SALT_LENGTH);
+	const iv = randomBytes(IV_LENGTH);
 	const key = pbkdf2Sync(
 		password,
 		salt,

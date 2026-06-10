@@ -2,9 +2,8 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-const postsCollection = defineCollection({
-	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
-	schema: z.object({
+const postSchema = z
+	.object({
 		title: z.string(),
 		published: z.date(),
 		updated: z.date().optional(),
@@ -39,7 +38,27 @@ const postsCollection = defineCollection({
 		prevSlug: z.string().default(""),
 		nextTitle: z.string().default(""),
 		nextSlug: z.string().default(""),
-	}),
+	})
+	.superRefine((data, ctx) => {
+		if (data.password && !data.encrypted) {
+			ctx.addIssue({
+				code: "custom",
+				path: ["password"],
+				message: "password requires encrypted: true",
+			});
+		}
+		if (data.encrypted && !data.password) {
+			ctx.addIssue({
+				code: "custom",
+				path: ["encrypted"],
+				message: "encrypted posts require password",
+			});
+		}
+	});
+
+const postsCollection = defineCollection({
+	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
+	schema: postSchema,
 });
 const specCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/spec" }),

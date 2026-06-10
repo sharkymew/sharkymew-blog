@@ -185,6 +185,7 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 </style>
 
 <script>
+	import { escapeHtml } from "../../../utils/security";
 	import { findActiveHeadingIndex } from "./hooks/useTocHighlight";
 	import { throttle } from "./hooks/useTocScroll";
 	import {
@@ -323,6 +324,7 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 			const html = tocItems
 				.map((item) => {
 					const indent = 0.5 + item.depth;
+					const itemId = escapeHtml(item.id);
 					const badge =
 						item.depth === 0
 							? `<span class="floating-toc-badge">${item.badge || ""}</span>`
@@ -330,7 +332,7 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 								? '<span class="floating-toc-dot"></span>'
 								: '<span class="floating-toc-dot-small"></span>';
 
-					return `<a href="#${item.id}" class="floating-toc-item" style="padding-left: ${indent}rem" data-level="${item.depth}">${badge}<span class="floating-toc-text">${item.text}</span></a>`;
+					return `<a href="#${itemId}" class="floating-toc-item" style="padding-left: ${indent}rem" data-level="${item.depth}">${badge}<span class="floating-toc-text">${item.text}</span></a>`;
 				})
 				.join("");
 
