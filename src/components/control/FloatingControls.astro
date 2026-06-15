@@ -1,28 +1,36 @@
 ---
 import type { MarkdownHeading } from "astro";
 
-import { musicPlayerConfig, siteConfig } from "../../config";
+import {
+	musicPlayerConfig,
+	musicPlayerEnabled,
+	siteConfig,
+} from "../../config";
 import FloatingTOC from "../features/toc/FloatingTOC.astro";
 import BackToHome from "./BackToHome.astro";
 import BackToTop from "./BackToTop.astro";
-import MusicFabButton from "./MusicFabButton.svelte";
 
 interface Props {
 	headings?: MarkdownHeading[];
 }
 
 const { headings = [] } = Astro.props;
+const shouldRenderMusicFab =
+	musicPlayerEnabled &&
+	musicPlayerConfig.showFloatingPlayer &&
+	(musicPlayerConfig.floatingEntryMode ?? "default") === "fab";
+const MusicFabButtonComponent = shouldRenderMusicFab
+	? (await import("./MusicFabButton.svelte")).default
+	: undefined;
 ---
 
 <div class="floating-controls-container">
 	{
-		musicPlayerConfig.enable &&
-			musicPlayerConfig.showFloatingPlayer &&
-			(musicPlayerConfig.floatingEntryMode ?? "default") === "fab" && (
-				<div class="floating-control-item" data-control-key="music">
-					<MusicFabButton client:idle />
-				</div>
-			)
+		MusicFabButtonComponent && (
+			<div class="floating-control-item" data-control-key="music">
+				<MusicFabButtonComponent client:idle />
+			</div>
+		)
 	}
 	{
 		siteConfig.toc.enable && siteConfig.toc.floating && (

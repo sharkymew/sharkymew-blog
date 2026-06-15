@@ -63,7 +63,7 @@ export { footerConfig } from "./footerConfig";
 // ─── 内容与版权 ─────────────────────────────────────────────
 export { licenseConfig } from "./licenseConfig";
 // ─── 多媒体 ─────────────────────────────────────────────────
-export { musicPlayerConfig } from "./musicConfig";
+export { musicPlayerConfig, musicPlayerEnabled } from "./musicConfig";
 // ─── 导航栏 ─────────────────────────────────────────────────
 export { navBarConfig } from "./navBarConfig";
 export { permalinkConfig } from "./permalinkConfig";

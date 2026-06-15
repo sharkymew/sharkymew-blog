@@ -1,7 +1,6 @@
 ---
 import "@/styles/markdown.css";
 import "@/styles/expressive-code.css";
-import "@/styles/encrypted-content.css";
 import "@/styles/markdown-extend.styl";
 
 import { encryptContent } from "@utils/crypto-utils";
@@ -21,4 +20,5 @@ const htmlContent = await Astro.slots.render("default");
 const encryptedContent = encryptContent(htmlContent, String(password), slug);
 ---
 
+<link rel="stylesheet" href="/assets/css/encrypted-content.css" />
 <PasswordProtection encryptedContent={encryptedContent} hint={hint} />

@@ -52,6 +52,9 @@ const mobileImages = normalizeToArray(bannerImages.mobile).filter(Boolean);
 const isCarouselEnabled =
 	siteConfig.banner.carousel?.enable &&
 	(desktopImages.length > 1 || mobileImages.length > 1);
+const shouldRenderTextOverlay =
+	showTextOverlay && (siteConfig.banner.homeText?.enable ?? false);
+const shouldRenderWave = showWave && (siteConfig.banner.waves?.enable ?? true);
 
 // 轮播间隔最小 1.5 秒，防止 setInterval 卡顿
 const carouselIntervalMs = Math.max(
@@ -610,8 +613,8 @@ const bannerFormats = getImageFormats();
 	)}
 
 	<!-- 首页文字覆盖层 -->
-	{siteConfig.banner.homeText?.enable && (
-		<div class={`banner-text-overlay absolute inset-0 z-20 flex items-center justify-center ${!showTextOverlay ? "hidden" : ""}`}>
+	{shouldRenderTextOverlay && (
+		<div class="banner-text-overlay absolute inset-0 z-20 flex items-center justify-center">
 			<div class="w-4/5 lg:w-3/4 text-center mb-0">
 				<div class="flex flex-col">
 					{overlayTitle && (
@@ -664,7 +667,7 @@ const bannerFormats = getImageFormats();
 	</div>
 
 	<!-- 水波纹效果 -->
-	{showWave && (
+	{shouldRenderWave && (
 		<div
 			class="waves absolute -bottom-[1px] h-[10vh] max-h-[9.375rem] min-h-[3.125rem] w-full md:h-[15vh]"
 			id="header-waves"

@@ -16,10 +16,12 @@ const { playlist, currentIndex, isPlaying, show, onClose, onPlaySong }: Props =
 	$props();
 </script>
 
-<AccordionDrawer {show} class="playlist-drawer">
-	<div class="playlist-shell">
+<AccordionDrawer {show} class="mt-0">
+	<div
+		class="mt-2 border-t border-[color-mix(in_srgb,var(--content-meta)_12%,transparent_88%)] pt-2"
+	>
 		<div
-			class="playlist-content"
+			class="flex max-h-48 flex-col gap-1 overflow-y-auto pr-1 pb-1 [scrollbar-width:none]"
 			role="listbox"
 			aria-label="Playlist"
 			aria-multiselectable="false"
@@ -35,32 +37,3 @@ const { playlist, currentIndex, isPlaying, show, onClose, onPlaySong }: Props =
 		</div>
 	</div>
 </AccordionDrawer>
-
-<style>
-	:global(.playlist-drawer) {
-		margin-top: 0;
-	}
-
-	.playlist-shell {
-		margin-top: 0.5rem;
-		padding-top: 0.5rem;
-		border-top: 1px solid
-			color-mix(in srgb, var(--content-meta) 12%, transparent 88%);
-	}
-
-	.playlist-content {
-		overflow-y: auto;
-		max-height: 12rem;
-		padding-right: 0.25rem;
-		padding-bottom: 0.25rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-	}
-
-	.playlist-content::-webkit-scrollbar {
-		display: none;
-	}
-</style>

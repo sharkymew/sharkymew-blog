@@ -120,21 +120,21 @@ const stats = [
 	class={className}
 	style={style}
 >
-	<div class="flex flex-col gap-1">
+	<div class="flex flex-col gap-0.5">
 		{
 			stats.map((stat) => (
-				<div class="flex items-center justify-between px-2 py-2">
-					<div class="flex items-center gap-2.5 flex-1 min-w-0">
-						<div class="text-[var(--primary)] text-xl shrink-0">
+				<div class="flex items-center justify-between px-1.5 py-1.5 rounded-lg">
+					<div class="flex items-center gap-2 flex-1 min-w-0">
+						<div class="text-black/35 dark:text-white/35 text-lg shrink-0">
 							<Icon name={stat.icon} />
 						</div>
-						<span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm break-words leading-tight">
+						<span class="text-black/55 dark:text-white/55 font-medium text-xs break-words leading-tight">
 							{stat.label}
 						</span>
 					</div>
-					<div class="flex items-center ml-3 shrink-0">
+					<div class="flex items-center ml-2 shrink-0">
 						<span
-							class="text-base font-bold text-neutral-900 dark:text-neutral-100"
+							class="text-sm font-semibold text-black/70 dark:text-white/70"
 							data-stat-id={stat.id}
 						>
 							{stat.formatted
@@ -142,7 +142,7 @@ const stats = [
 								: stat.value}
 						</span>
 						{stat.suffix && (
-							<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+							<span class="text-xs text-black/35 dark:text-white/35 ml-0.5">
 								{stat.suffix}
 							</span>
 						)}

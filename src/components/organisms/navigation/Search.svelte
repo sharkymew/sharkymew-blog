@@ -1,10 +1,10 @@
 <script lang="ts">
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import Icon from "@iconify/svelte";
 import { navigateToPage } from "@utils/navigation-utils";
 import { url } from "@utils/url-utils";
 import { onDestroy, onMount } from "svelte";
+import ControlIcon from "@components/atoms/Icon/ControlIcon.svelte";
 
 import type { SearchResult } from "@/global";
 
@@ -131,12 +131,10 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 			searchResults = fakeResult;
 		} else {
 			searchResults = [];
-			console.error("Pagefind is not available in production environment.");
 		}
 		result = searchResults;
 		setPanelVisibility(result.length > 0, isDesktop);
-	} catch (error) {
-		console.error("Search error:", error);
+	} catch {
 		result = [];
 		setPanelVisibility(false, isDesktop);
 	}
@@ -149,28 +147,19 @@ onMount(() => {
 			typeof window !== "undefined" &&
 			!!window.pagefind &&
 			typeof window.pagefind.search === "function";
-		console.log("Pagefind status on init:", pagefindLoaded);
 	};
 	if (import.meta.env.DEV) {
-		console.log(
-			"Pagefind is not available in development mode. Using mock data.",
-		);
 		initializeSearch();
 	} else {
 		document.addEventListener("pagefindready", () => {
-			console.log("Pagefind ready event received.");
 			initializeSearch();
 		});
 		document.addEventListener("pagefindloaderror", () => {
-			console.warn(
-				"Pagefind load error event received. Search functionality will be limited.",
-			);
 			initializeSearch(); // Initialize with pagefindLoaded as false
 		});
 		// Fallback in case events are not caught or pagefind is already loaded by the time this script runs
 		setTimeout(() => {
 			if (!initialized) {
-				console.log("Fallback: Initializing search after timeout.");
 				initializeSearch();
 			}
 		}, 2000); // Adjust timeout as needed
@@ -253,14 +242,14 @@ onDestroy(() => {
 			input?.focus();
 		}}
 	>
-		<Icon
-			icon="material-symbols:search"
+		<ControlIcon
+			name="search"
 			class="absolute text-[1.25rem] pointer-events-none {isDesktopSearchExpanded
 				? 'left-3'
 				: 'left-1/2 -translate-x-1/2'} transition top-1/2 -translate-y-1/2 {isDesktopSearchExpanded
 				? 'text-black/30 dark:text-white/30'
 				: ''}"
-		></Icon>
+		/>
 		<input
 			id="search-input-desktop"
 			placeholder={i18n(I18nKey.search)}
@@ -288,7 +277,7 @@ onDestroy(() => {
 	id="search-switch"
 	class="btn-plain scale-animation lg:!hidden rounded-lg w-11 h-11 active:scale-90"
 >
-	<Icon icon="material-symbols:search" class="text-[1.25rem]"></Icon>
+	<ControlIcon name="search" class="text-[1.25rem]" />
 </button>
 
 <!-- search panel -->
@@ -304,10 +293,10 @@ onDestroy(() => {
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
   "
 	>
-		<Icon
-			icon="material-symbols:search"
+		<ControlIcon
+			name="search"
 			class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"
-		></Icon>
+		/>
 		<input
 			placeholder={i18n(I18nKey.search)}
 			bind:value={keywordMobile}
@@ -326,10 +315,10 @@ onDestroy(() => {
 			<div
 				class="transition text-90 inline-flex font-bold group-hover:text-[var(--primary)]"
 			>
-				{item.meta.title}<Icon
-					icon="fa7-solid:chevron-right"
+				{item.meta.title}<ControlIcon
+					name="chevron-right"
 					class="transition text-[0.75rem] translate-x-1 my-auto text-[var(--primary)]"
-				></Icon>
+				/>
 			</div>
 			<div class="transition text-sm text-50">
 				{@html item.excerpt}

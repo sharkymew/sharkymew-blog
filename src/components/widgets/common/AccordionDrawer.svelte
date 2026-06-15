@@ -10,29 +10,10 @@ interface Props {
 const { show, class: className = "", children }: Props = $props();
 </script>
 
-<div class={`accordion-drawer ${className}`} class:open={show}>
-	<div class="accordion-inner">
+<div
+	class={`grid opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${show ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr]"} ${className}`}
+>
+	<div class="min-h-0 overflow-hidden">
 		{@render children?.()}
 	</div>
 </div>
-
-<style>
-	.accordion-drawer {
-		display: grid;
-		grid-template-rows: 0fr;
-		opacity: 0;
-		transition:
-			grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1),
-			opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.accordion-drawer.open {
-		grid-template-rows: 1fr;
-		opacity: 1;
-	}
-
-	.accordion-inner {
-		overflow: hidden;
-		min-height: 0;
-	}
-</style>

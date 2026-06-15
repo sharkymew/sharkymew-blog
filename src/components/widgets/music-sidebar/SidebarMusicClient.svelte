@@ -68,8 +68,8 @@ function setVolume(volume: number) {
 }
 </script>
 
-<div class="music-sidebar-widget">
-	<div class="flex items-center gap-3 mb-2.5">
+<div class="music-sidebar-widget min-w-0">
+	<div class="flex items-center gap-3 mb-2.5 max-[520px]:mb-2">
 		<SidebarCover
 			currentSong={state.currentSong}
 			isPlaying={state.isPlaying}
@@ -112,16 +112,3 @@ function setVolume(volume: number) {
 		onPlaySong={playIndex}
 	/>
 </div>
-
-<style>
-	@media (max-width: 520px) {
-		.music-sidebar-widget {
-			min-width: 0;
-		}
-
-		.music-sidebar-widget > :global(div:first-child) {
-			gap: 0.75rem;
-			margin-bottom: 0.5rem;
-		}
-	}
-</style>

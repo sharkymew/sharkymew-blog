@@ -1,5 +1,25 @@
 /* 相册模块样式 */
 
+#albums-grid {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  #albums-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+#main-grid[data-layout-mode="grid"] #albums-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 639px) {
+  #main-grid[data-layout-mode="grid"] #albums-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 相册卡片动画 */
 .album-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

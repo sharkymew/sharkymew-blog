@@ -38,10 +38,11 @@ const repeatIcon = $derived(
 const modeActive = $derived(isShuffled || repeatMode > 0);
 </script>
 
-<div class="controls-row">
+<div
+	class="mt-3 flex flex-nowrap items-center justify-between gap-1 px-0.5 max-[520px]:gap-[0.15rem] max-[520px]:px-0 max-[520px]:[&_.btn-plain]:h-9 max-[520px]:[&_.btn-plain]:w-9 max-[520px]:[&_.btn-plain]:flex-[0_0_2.25rem] max-[520px]:[&_.btn-plain]:rounded-[0.6rem] max-[520px]:[&_.btn-plain]:p-0 max-[520px]:[&_.btn-regular]:h-11 max-[520px]:[&_.btn-regular]:w-11 max-[520px]:[&_.btn-regular]:flex-[0_0_2.75rem] [&_button]:shrink-0"
+>
 	<button
-		class="icon-btn mode-btn"
-		class:active-mode={modeActive}
+		class={`flex h-8 w-8 flex-none items-center justify-center transition-[color,transform] duration-150 hover:text-[var(--primary)] active:scale-[0.96] max-[520px]:h-[1.9rem] max-[520px]:w-[1.9rem] max-[520px]:flex-[0_0_1.9rem] ${modeActive ? "text-[var(--primary)]" : "text-[var(--content-meta)]"}`}
 		onclick={() => onToggleMode?.()}
 		aria-label="Repeat mode"
 	>
@@ -51,83 +52,10 @@ const modeActive = $derived(isShuffled || repeatMode > 0);
 	<PlayButton {isPlaying} isLoading={false} onclick={onTogglePlay} />
 	<NextButton onclick={onNext} disabled={false} />
 	<button
-		class="icon-btn list-btn"
+		class="flex h-8 w-8 flex-none items-center justify-center text-[var(--content-meta)] transition-[color,transform] duration-150 hover:text-[var(--primary)] active:scale-[0.96] max-[520px]:h-[1.9rem] max-[520px]:w-[1.9rem] max-[520px]:flex-[0_0_1.9rem]"
 		onclick={onTogglePlaylist}
 		aria-label="Playlist"
 	>
 		<Icon icon="material-symbols:queue-music-rounded" />
 	</button>
 </div>
-
-<style>
-	.controls-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.25rem;
-		margin-top: 0.75rem;
-		padding-inline: 0.125rem;
-		flex-wrap: nowrap;
-	}
-
-	.icon-btn {
-		width: 2rem;
-		height: 2rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--content-main);
-		transition:
-			color 150ms ease,
-			transform 150ms ease;
-		flex: 0 0 auto;
-	}
-
-	.icon-btn:hover {
-		color: var(--primary);
-	}
-
-	.icon-btn:active {
-		transform: scale(0.96);
-	}
-
-	.mode-btn,
-	.list-btn {
-		color: var(--content-meta);
-	}
-
-	.active-mode {
-		color: var(--primary);
-	}
-
-	.controls-row :global(button) {
-		flex-shrink: 0;
-	}
-
-	@media (max-width: 520px) {
-		.controls-row {
-			gap: 0.15rem;
-			padding-inline: 0;
-		}
-
-		.controls-row :global(.btn-plain) {
-			width: 2.25rem;
-			height: 2.25rem;
-			padding: 0;
-			border-radius: 0.6rem;
-			flex: 0 0 2.25rem;
-		}
-
-		.controls-row :global(.btn-regular) {
-			width: 2.75rem;
-			height: 2.75rem;
-			flex: 0 0 2.75rem;
-		}
-
-		.icon-btn {
-			width: 1.9rem;
-			height: 1.9rem;
-			flex: 0 0 1.9rem;
-		}
-	}
-</style>

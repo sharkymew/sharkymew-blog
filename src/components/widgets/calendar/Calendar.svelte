@@ -1,6 +1,6 @@
 <script lang="ts">
-import Icon from "@iconify/svelte";
 import { onMount } from "svelte";
+import ControlIcon from "@components/atoms/Icon/ControlIcon.svelte";
 
 let dateCheckInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -258,10 +258,7 @@ onMount(() => {
 				onclick={handleBackToToday}
 				aria-label="Back to today"
 			>
-				<Icon
-					icon="material-symbols:restart-alt-rounded"
-					class="text-xl"
-				/>
+				<ControlIcon name="refresh" class="text-xl" />
 			</button>
 		{/if}
 		<button
@@ -273,7 +270,7 @@ onMount(() => {
 			onclick={handlePrevMonth}
 			aria-label="Previous month"
 		>
-			<Icon icon="material-symbols:arrow-back-ios-new" class="text-lg" />
+			<ControlIcon name="arrow-back" class="text-lg" />
 		</button>
 		<button
 			type="button"
@@ -284,10 +281,7 @@ onMount(() => {
 			onclick={handleNextMonth}
 			aria-label="Next month"
 		>
-			<Icon
-				icon="material-symbols:arrow-back-ios-new"
-				class="text-lg rotate-180"
-			/>
+			<ControlIcon name="arrow-back" class="text-lg rotate-180" />
 		</button>
 	</div>
 </div>

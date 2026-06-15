@@ -33,17 +33,17 @@ const displayDate =
 
 <a
 	href={getPostUrlBySlug(post.id)}
-	class="group flex items-center gap-3 px-3 py-3 -mx-1 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
+	class="group flex items-center gap-2.5 px-2.5 py-2 -mx-1 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
 >
 	<div
-		class="shrink-0 w-6 h-6 rounded-md bg-(--enter-btn-bg) text-(--primary) flex items-center justify-center text-sm font-bold transition"
+		class="shrink-0 w-5 h-5 rounded-md bg-(--btn-regular-bg) text-black/45 dark:text-white/45 flex items-center justify-center text-xs font-semibold transition"
 	>
 		{index + 1}
 	</div>
 
 	<div class="flex-1 min-w-0">
 		<div
-			class="font-bold text-sm text-black/75 dark:text-white/75 truncate transition group-hover:text-(--primary)"
+			class="font-semibold text-sm text-black/70 dark:text-white/70 truncate transition group-hover:text-(--primary)"
 		>
 			{post.data.title}
 		</div>

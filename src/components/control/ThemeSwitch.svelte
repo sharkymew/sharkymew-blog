@@ -1,8 +1,8 @@
 <script lang="ts">
 import { DARK_MODE, DEFAULT_THEME, LIGHT_MODE } from "@constants/constants";
-import Icon from "@iconify/svelte";
 import { getStoredTheme, setTheme } from "@utils/setting-utils";
 import { onMount } from "svelte";
+import ControlIcon from "@components/atoms/Icon/ControlIcon.svelte";
 
 import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
@@ -92,20 +92,14 @@ if (typeof window !== "undefined") {
 		class:opacity-0={mode !== LIGHT_MODE}
 		class:rotate-180={mode !== LIGHT_MODE}
 	>
-		<Icon
-			icon="material-symbols:wb-sunny-outline-rounded"
-			class="text-[1.25rem]"
-		></Icon>
+		<ControlIcon name="sun" class="text-[1.25rem]" />
 	</div>
 	<div
 		class="absolute transition-all duration-300 ease-in-out"
 		class:opacity-0={mode !== DARK_MODE}
 		class:rotate-180={mode !== DARK_MODE}
 	>
-		<Icon
-			icon="material-symbols:dark-mode-outline-rounded"
-			class="text-[1.25rem]"
-		></Icon>
+		<ControlIcon name="moon" class="text-[1.25rem]" />
 	</div>
 </button>
 

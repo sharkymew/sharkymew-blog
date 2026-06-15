@@ -3,6 +3,7 @@ import { SidebarTOC } from "@components/features/toc";
 import type { MarkdownHeading } from "astro";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 
+import { musicPlayerEnabled } from "@/config";
 import { widgetManager } from "@/utils/widget-manager";
 import { buildComponentProps } from "@/utils/widget-renderer";
 
@@ -10,8 +11,6 @@ import Announcement from "../widgets/announcement/Announcement.astro";
 import Calendar from "../widgets/calendar/Calendar.astro";
 import { CardTOC } from "../widgets/card-toc";
 import Categories from "../widgets/categories/Categories.astro";
-import MusicPlayer from "../widgets/music-player/MusicPlayer.svelte";
-import { MusicSidebarWidget } from "../widgets/music-sidebar";
 import Profile from "../widgets/profile/Profile.astro";
 import SiteStats from "../widgets/site-stats/SiteStats.astro";
 import Tags from "../widgets/tags/Tags.astro";
@@ -49,35 +48,84 @@ const componentMap: Record<string, unknown> = {
 	tags: Tags,
 	toc: SidebarTOC,
 	"card-toc": CardTOC,
-	"music-player": MusicPlayer,
-	"music-sidebar": MusicSidebarWidget,
 	"site-stats": SiteStats,
 	calendar: Calendar,
 };
+
+const musicPlayerModules = import.meta.glob(
+	"../widgets/music-player/MusicPlayer.svelte",
+);
+const musicSidebarModules = import.meta.glob(
+	"../widgets/music-sidebar/MusicSidebarWidget.astro",
+);
+
+if (musicPlayerEnabled) {
+	const loadMusicPlayer =
+		musicPlayerModules["../widgets/music-player/MusicPlayer.svelte"];
+	const loadMusicSidebar =
+		musicSidebarModules["../widgets/music-sidebar/MusicSidebarWidget.astro"];
+
+	if (loadMusicPlayer && loadMusicSidebar) {
+		const [{ default: MusicPlayer }, { default: MusicSidebarWidget }] =
+			(await Promise.all([loadMusicPlayer(), loadMusicSidebar()])) as Array<{
+				default: unknown;
+			}>;
+
+		componentMap["music-player"] = MusicPlayer;
+		componentMap["music-sidebar"] = MusicSidebarWidget;
+	}
+}
 
 type WidgetComponentConfig = ReturnType<
 	typeof widgetManager.getComponentsByPosition
 >[number];
 
+function filterDisabledComponents(
+	components: WidgetComponentConfig[],
+): WidgetComponentConfig[] {
+	return components.filter((component) => {
+		if (
+			(component.type === "music-player" ||
+				component.type === "music-sidebar") &&
+			!musicPlayerEnabled
+		) {
+			return false;
+		}
+		return true;
+	});
+}
+
 const mobileTopComponents = showMobile
-	? widgetManager.getComponentsByPosition("top", side, "mobile")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("top", side, "mobile"),
+		)
 	: [];
 const mobileStickyComponents = showMobile
-	? widgetManager.getComponentsByPosition("sticky", side, "mobile")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("sticky", side, "mobile"),
+		)
 	: [];
 
 const tabletTopComponents = showTablet
-	? widgetManager.getComponentsByPosition("top", side, "tablet")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("top", side, "tablet"),
+		)
 	: [];
 const tabletStickyComponents = showTablet
-	? widgetManager.getComponentsByPosition("sticky", side, "tablet")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("sticky", side, "tablet"),
+		)
 	: [];
 
 const desktopTopComponents = showDesktop
-	? widgetManager.getComponentsByPosition("top", side, "desktop")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("top", side, "desktop"),
+		)
 	: [];
 const desktopStickyComponents = showDesktop
-	? widgetManager.getComponentsByPosition("sticky", side, "desktop")
+	? filterDisabledComponents(
+			widgetManager.getComponentsByPosition("sticky", side, "desktop"),
+		)
 	: [];
 
 function renderComponent(

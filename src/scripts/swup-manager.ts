@@ -5,7 +5,7 @@
 
 import { widgetConfigs } from "../config";
 import { initLinkPreloading } from "../utils/navigation-utils";
-import { SWUP_SELECTORS } from "./core/swup-config";
+import { FANCYBOX_SELECTORS, SWUP_SELECTORS } from "./core/swup-config";
 import { SwupHooksManager } from "./core/swup-hooks";
 import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
 import {
@@ -17,15 +17,50 @@ import {
 	getBackToTopHandler,
 	initBackToTopHandler,
 } from "./handlers/back-to-top-handler";
-import type { FancyboxHandler } from "./handlers/fancybox-handler";
-import {
-	cleanupFancybox,
-	getFancyboxHandler,
-	initFancybox,
-} from "./handlers/fancybox-handler";
 import type { PanelHandler } from "./handlers/panel-handler";
 import { getPanelHandler, initPanelHandler } from "./handlers/panel-handler";
 import { checkKatex, initCustomScrollbar } from "./handlers/scroll-handler";
+
+type FancyboxModule = typeof import("./handlers/fancybox-handler");
+
+let fancyboxModulePromise: Promise<FancyboxModule> | null = null;
+
+function hasFancyboxTargets(): boolean {
+	return (
+		document.querySelector(FANCYBOX_SELECTORS.albumImages) !== null ||
+		document.querySelector(FANCYBOX_SELECTORS.albumLinks) !== null ||
+		document.querySelector(FANCYBOX_SELECTORS.singleFancybox) !== null
+	);
+}
+
+function loadFancyboxModule(): Promise<FancyboxModule> {
+	fancyboxModulePromise ??= import("./handlers/fancybox-handler");
+	return fancyboxModulePromise;
+}
+
+async function initFancyboxWhenNeeded(): Promise<void> {
+	if (!hasFancyboxTargets()) {
+		return;
+	}
+	const { initFancybox } = await loadFancyboxModule();
+	await initFancybox();
+}
+
+function cleanupFancyboxIfLoaded(): void {
+	if (!fancyboxModulePromise) {
+		return;
+	}
+	void fancyboxModulePromise.then(({ cleanupFancybox }) => cleanupFancybox());
+}
+
+function destroyFancyboxIfLoaded(): void {
+	if (!fancyboxModulePromise) {
+		return;
+	}
+	void fancyboxModulePromise.then(({ getFancyboxHandler }) => {
+		getFancyboxHandler().destroy();
+	});
+}
 
 /**
  * Swup 管理器类
@@ -33,7 +68,6 @@ import { checkKatex, initCustomScrollbar } from "./handlers/scroll-handler";
  */
 export class SwupManager {
 	private hooksManager: SwupHooksManager | null = null;
-	private fancyboxHandler: FancyboxHandler;
 	private backToTopHandler: BackToTopHandler;
 	private panelHandler: PanelHandler;
 
@@ -46,7 +80,6 @@ export class SwupManager {
 		);
 
 		// 初始化各个处理器
-		this.fancyboxHandler = getFancyboxHandler();
 		this.backToTopHandler = getBackToTopHandler(this.bannerEnabled);
 		this.panelHandler = getPanelHandler();
 	}
@@ -80,7 +113,6 @@ export class SwupManager {
 		this.initPreloading();
 
 		this.initialized = true;
-		console.log("SwupManager: 初始化完成");
 	}
 
 	/**
@@ -89,8 +121,8 @@ export class SwupManager {
 	private async initPanelHandler(): Promise<void> {
 		try {
 			await initPanelHandler();
-		} catch (error) {
-			console.error("SwupManager: 面板处理器初始化失败", error);
+		} catch {
+			// Panel shortcuts are non-critical; individual buttons still work.
 		}
 	}
 
@@ -109,10 +141,10 @@ export class SwupManager {
 		this.hooksManager = new SwupHooksManager(this.bannerEnabled, {
 			showBanner: this.showBanner.bind(this),
 			initFancybox: async () => {
-				await initFancybox();
+				await initFancyboxWhenNeeded();
 			},
 			cleanupFancybox: () => {
-				cleanupFancybox();
+				cleanupFancyboxIfLoaded();
 			},
 			initCustomScrollbar: () => {
 				initCustomScrollbar();
@@ -124,7 +156,7 @@ export class SwupManager {
 
 		// 如果 Swup 已经就绪，直接设置钩子
 		if (window?.swup?.hooks) {
-			initFancybox();
+			void initFancyboxWhenNeeded();
 			checkKatex();
 			this.hooksManager.registerHooks();
 		} else {
@@ -138,11 +170,11 @@ export class SwupManager {
 			// 监听 DOM 加载（确保首屏也能加载优化组件）
 			if (document.readyState === "loading") {
 				document.addEventListener("DOMContentLoaded", async () => {
-					await initFancybox();
+					await initFancyboxWhenNeeded();
 					checkKatex();
 				});
 			} else {
-				initFancybox();
+				void initFancyboxWhenNeeded();
 				checkKatex();
 			}
 		}
@@ -205,7 +237,7 @@ export class SwupManager {
 	 */
 	destroy(): void {
 		this.hooksManager = null;
-		this.fancyboxHandler.destroy();
+		destroyFancyboxIfLoaded();
 		this.backToTopHandler.destroy();
 		this.panelHandler.destroy();
 		destroyTransitionEffect();

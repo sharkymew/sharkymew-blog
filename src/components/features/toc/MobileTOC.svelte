@@ -1,6 +1,6 @@
 <script lang="ts">
-import Icon from "@iconify/svelte";
 import { onMount } from "svelte";
+import ControlIcon from "@components/atoms/Icon/ControlIcon.svelte";
 
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
@@ -233,7 +233,7 @@ const getActivePadding = (level: number): string => {
 	id="mobile-toc-switch"
 	class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 lg:!hidden theme-switch-btn"
 >
-	<Icon icon="material-symbols:format-list-bulleted" class="text-[1.25rem]" />
+	<ControlIcon name="list" class="text-[1.25rem]" />
 </button>
 
 <div
@@ -251,17 +251,14 @@ const getActivePadding = (level: number): string => {
 			aria-label="Close TOC"
 			class="btn-plain rounded-lg h-8 w-8 active:scale-90 theme-switch-btn"
 		>
-			<Icon icon="material-symbols:close" class="text-[1rem]" />
+			<ControlIcon name="close" class="text-[1rem]" />
 		</button>
 	</div>
 
 	{#if isHomePage}
 		{#if postItems.length === 0}
 			<div class="text-center py-8 text-black/50 dark:text-white/50">
-				<Icon
-					icon="material-symbols:article-outline"
-					class="text-2xl mb-2"
-				/>
+				<ControlIcon name="article" class="text-2xl mb-2" />
 				<p>暂无文章</p>
 			</div>
 		{:else}
@@ -273,7 +270,7 @@ const getActivePadding = (level: number): string => {
 					>
 						<div class="post-title">
 							{#if post.pinned}
-								<Icon icon="mdi:pin" class="pinned-icon" />
+								<ControlIcon name="pin" class="pinned-icon" />
 							{/if}
 							{post.title}
 						</div>

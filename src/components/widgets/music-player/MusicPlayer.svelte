@@ -1,8 +1,6 @@
 <script lang="ts">
 import Icon from "@iconify/svelte";
 import { onDestroy, onMount } from "svelte";
-import { cubicOut } from "svelte/easing";
-import { fly } from "svelte/transition";
 
 import { musicPlayerConfig } from "@/config";
 import type { MusicPlayerState } from "@/stores/musicPlayerStore";
@@ -226,15 +224,7 @@ onDestroy(() => {
 	{#if useFabEntry}
 		{#if state.isExpanded}
 			<div class="music-player-fab-anchor fixed z-[55]">
-				<div
-					class="music-player-fab-shell"
-					transition:fly={{
-						y: 16,
-						duration: 280,
-						opacity: 0.12,
-						easing: cubicOut,
-					}}
-				>
+				<div class="music-player-fab-shell">
 					<FabMusicPanel />
 				</div>
 			</div>

@@ -75,24 +75,36 @@ function handleVolumeKeyDown(event: KeyboardEvent) {
 }
 </script>
 
-<div class="flex flex-col min-w-0 flex-1 overflow-hidden">
-	<div class="title-row">
-		<span class="title-text truncate">{currentSong.title}</span>
+<div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+	<div class="mb-[0.06rem]">
+		<span
+			class="block truncate font-semibold leading-[1.1] text-[var(--content-main)] dark:text-neutral-100"
+			>{currentSong.title}</span
+		>
 	</div>
-	<div class="artist-row">
-		<span class="artist-text truncate">{currentSong.artist}</span>
+	<div class="mb-[0.36rem] max-[520px]:mb-[0.28rem]">
+		<span class="block truncate text-xs text-[var(--content-meta)]"
+			>{currentSong.artist}</span
+		>
 	</div>
-	<div class="meta-row">
-		<div class="time-label" aria-live="polite">
+	<div
+		class="flex min-w-0 items-center justify-between gap-[0.55rem] max-[520px]:gap-1.5"
+	>
+		<div
+			class="flex shrink-0 items-center gap-[0.2rem] whitespace-nowrap text-xs text-[var(--content-meta)] max-[520px]:text-[0.625rem]"
+			aria-live="polite"
+		>
 			<span>{currentTimeLabel}</span>
-			<span class="divider">/</span>
+			<span class="opacity-60">/</span>
 			<span>{durationLabel}</span>
 		</div>
 
-		<div class="volume-wrap">
+		<div
+			class="ml-auto flex min-w-0 items-center justify-end gap-[0.35rem] max-[520px]:gap-1"
+		>
 			<button
 				type="button"
-				class="volume-btn"
+				class="flex h-6 w-6 items-center justify-center rounded-md text-[var(--content-meta)] transition-colors duration-150 hover:text-[var(--primary)] max-[520px]:h-5 max-[520px]:w-5"
 				onclick={onToggleMute}
 				aria-label="Toggle volume"
 			>
@@ -105,7 +117,7 @@ function handleVolumeKeyDown(event: KeyboardEvent) {
 			</button>
 
 			<div
-				class="volume-slider"
+				class="relative h-1 w-16 shrink-0 cursor-pointer overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--btn-regular-bg)_80%,var(--content-meta)_20%)] transition-[height] duration-150 hover:h-1.5 focus-visible:h-1.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)] max-[520px]:w-[3.2rem]"
 				onpointerdown={handleVolumePointer}
 				onpointermove={handleVolumeMove}
 				onpointerup={handleVolumeEnd}
@@ -119,143 +131,10 @@ function handleVolumeKeyDown(event: KeyboardEvent) {
 				aria-valuenow={volumePercent}
 			>
 				<div
-					class="volume-fill"
+					class="h-full rounded-[inherit] bg-[var(--primary)] transition-[width] duration-100 ease-linear"
 					style={`width: ${volumePercent}%`}
 				></div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<style>
-	.title-row {
-		margin-bottom: 0.06rem;
-	}
-
-	.title-text {
-		font-weight: 600;
-		color: var(--content-main);
-		line-height: 1.1;
-	}
-
-	:global(.dark) .title-text {
-		color: rgb(245 245 245);
-	}
-
-	.artist-text {
-		font-size: 0.75rem;
-		color: var(--content-meta);
-		display: block;
-	}
-
-	.artist-row {
-		margin-bottom: 0.36rem;
-	}
-
-	.meta-row {
-		display: flex;
-		align-items: center;
-		gap: 0.55rem;
-		min-width: 0;
-		justify-content: space-between;
-	}
-
-	.time-label {
-		display: flex;
-		align-items: center;
-		gap: 0.2rem;
-		font-size: 0.75rem;
-		font-family: inherit;
-		color: var(--content-meta);
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	.divider {
-		opacity: 0.6;
-	}
-
-	.volume-wrap {
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-		min-width: 0;
-		justify-content: flex-end;
-		margin-left: auto;
-	}
-
-	.volume-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 1.5rem;
-		height: 1.5rem;
-		border-radius: 0.375rem;
-		color: var(--content-meta);
-		transition: color 150ms ease;
-	}
-
-	.volume-btn:hover {
-		color: var(--primary);
-	}
-
-	.volume-slider {
-		position: relative;
-		width: 4rem;
-		height: 0.25rem;
-		border-radius: 9999px;
-		background: color-mix(
-			in srgb,
-			var(--btn-regular-bg) 80%,
-			var(--content-meta) 20%
-		);
-		overflow: hidden;
-		cursor: pointer;
-		flex-shrink: 0;
-		transition: height 150ms ease;
-	}
-
-	.volume-slider:hover,
-	.volume-slider:focus-visible {
-		height: 0.375rem;
-	}
-
-	.volume-fill {
-		height: 100%;
-		background: var(--primary);
-		border-radius: inherit;
-		transition: width 100ms linear;
-	}
-
-	.volume-slider:focus-visible {
-		outline: 2px solid var(--primary);
-		outline-offset: 2px;
-	}
-
-	@media (max-width: 520px) {
-		.artist-row {
-			margin-bottom: 0.28rem;
-		}
-
-		.meta-row {
-			gap: 0.4rem;
-		}
-
-		.time-label {
-			font-size: 0.625rem;
-		}
-
-		.volume-wrap {
-			gap: 0.25rem;
-		}
-
-		.volume-btn {
-			width: 1.25rem;
-			height: 1.25rem;
-		}
-
-		.volume-slider {
-			width: 3.2rem;
-		}
-	}
-</style>

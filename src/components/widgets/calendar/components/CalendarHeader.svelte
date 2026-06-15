@@ -1,5 +1,5 @@
 <script lang="ts">
-import Icon from "@iconify/svelte";
+import ControlIcon from "@components/atoms/Icon/ControlIcon.svelte";
 
 interface Props {
 	monthNames: string[];
@@ -60,10 +60,7 @@ const title = $derived(
 				onclick={onBackToToday}
 				aria-label="Back to today"
 			>
-				<Icon
-					icon="material-symbols:restart-alt-rounded"
-					class="text-xl"
-				/>
+				<ControlIcon name="refresh" class="text-xl" />
 			</button>
 		{/if}
 		<button
@@ -75,7 +72,7 @@ const title = $derived(
 			onclick={onPrevMonth}
 			aria-label="Previous month"
 		>
-			<Icon icon="material-symbols:arrow-back-ios-new" class="text-lg" />
+			<ControlIcon name="arrow-back" class="text-lg" />
 		</button>
 		<button
 			type="button"
@@ -86,10 +83,7 @@ const title = $derived(
 			onclick={onNextMonth}
 			aria-label="Next month"
 		>
-			<Icon
-				icon="material-symbols:arrow-back-ios-new"
-				class="text-lg rotate-180"
-			/>
+			<ControlIcon name="arrow-back" class="text-lg rotate-180" />
 		</button>
 	</div>
 </div>

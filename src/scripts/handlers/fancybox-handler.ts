@@ -10,6 +10,40 @@ import {
 
 // Fancybox 模块类型
 type FancyboxType = any;
+const FANCYBOX_CSS_URL = "/assets/css/fancybox.css";
+const FANCYBOX_CUSTOM_CSS_URL = "/assets/css/fancybox-custom.css";
+let fancyboxStylesPromise: Promise<void> | null = null;
+
+function loadStylesheet(id: string, href: string): Promise<void> {
+	if (document.getElementById(id)) {
+		return Promise.resolve();
+	}
+
+	return new Promise((resolve, reject) => {
+		const link = document.createElement("link");
+		link.id = id;
+		link.rel = "stylesheet";
+		link.href = href;
+		link.onload = () => resolve();
+		link.onerror = () => {
+			link.remove();
+			reject(new Error(`Failed to load stylesheet: ${href}`));
+		};
+		document.head.appendChild(link);
+	});
+}
+
+function loadFancyboxStyles(): Promise<void> {
+	if (!fancyboxStylesPromise) {
+		fancyboxStylesPromise = loadStylesheet(
+			"fancybox-core-css",
+			FANCYBOX_CSS_URL,
+		).then(() =>
+			loadStylesheet("fancybox-custom-css", FANCYBOX_CUSTOM_CSS_URL),
+		);
+	}
+	return fancyboxStylesPromise;
+}
 
 /**
  * Fancybox 处理器类
@@ -62,7 +96,7 @@ export class FancyboxHandler {
 	private async loadFancybox(): Promise<void> {
 		const mod = await import("@fancyapps/ui");
 		this.Fancybox = mod.Fancybox;
-		await import("@fancyapps/ui/dist/fancybox/fancybox.css");
+		await loadFancyboxStyles();
 	}
 
 	/**

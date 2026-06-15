@@ -32,9 +32,9 @@ function handleKeyDown(event: KeyboardEvent) {
 }
 </script>
 
-<div class="sidebar-progress-wrapper">
+<div class="mt-[0.15rem]">
 	<div
-		class="sidebar-progress-bar"
+		class="relative h-1.5 w-full cursor-pointer overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--btn-regular-bg)_80%,var(--content-meta)_20%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
 		onclick={handleClick}
 		onkeydown={handleKeyDown}
 		role="slider"
@@ -45,41 +45,8 @@ function handleKeyDown(event: KeyboardEvent) {
 		aria-valuenow={progressPercent}
 	>
 		<div
-			class="sidebar-progress-fill"
+			class="h-full min-w-0 rounded-[inherit] bg-[var(--primary)] transition-[width] duration-100 ease-linear"
 			style={`width: ${progressPercent}%`}
 		></div>
 	</div>
 </div>
-
-<style>
-	.sidebar-progress-wrapper {
-		margin-top: 0.15rem;
-	}
-
-	.sidebar-progress-bar {
-		position: relative;
-		width: 100%;
-		height: 0.375rem;
-		border-radius: 9999px;
-		background: color-mix(
-			in srgb,
-			var(--btn-regular-bg) 80%,
-			var(--content-meta) 20%
-		);
-		overflow: hidden;
-		cursor: pointer;
-	}
-
-	.sidebar-progress-fill {
-		height: 100%;
-		border-radius: inherit;
-		background: var(--primary);
-		transition: width 100ms linear;
-		min-width: 0;
-	}
-
-	.sidebar-progress-bar:focus-visible {
-		outline: 2px solid var(--primary);
-		outline-offset: 2px;
-	}
-</style>
